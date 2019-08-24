@@ -1,4 +1,3 @@
-# %% markdown
 # ## Import packages.
 # import packages
 import numpy as np
@@ -16,8 +15,6 @@ from torch import nn
 from torch import distributions
 from torch.nn.parameter import Parameter
 
-from sklearn import cluster, datasets, mixture
-from sklearn.preprocessing import StandardScaler
 # %%
 # define plot properties
 from cycler import cycler
@@ -48,6 +45,7 @@ rcParams['patch.edgecolor'] = 'white'
 #rcParams['font.family'] = 'Bitstream Vera Sans'
 rcParams['font.size'] = 23
 rcParams['font.weight'] = 300
+
 
 # %% markdown
 # ## GALAH age distribution.
