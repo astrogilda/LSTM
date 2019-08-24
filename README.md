@@ -1,1 +1,6 @@
-# Autoregressive_Flow_GA
+# Autoregressive Flow GA
+
+> Author:
+Yuan-Sen Ting
+Francois Lanusse
+Nesar Ramachandra
