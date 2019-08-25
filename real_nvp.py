@@ -145,7 +145,7 @@ for e in range(num_epochs):
 z1 = flow.f(y_tr)[0].detach().cpu().numpy()
 x1 = y_tr
 z2 = np.random.multivariate_normal(np.zeros(dim_in), np.eye(dim_in), x1.shape[0])
-x2 = flow.sample(torch.from_numpy(z2).type(torch.FloatTensor))
+x2 = flow.sample(torch.from_numpy(z2).type(torch.cuda.FloatTensor))
 
 # rescale the results
 x1 = x1*std_y + mu_y
