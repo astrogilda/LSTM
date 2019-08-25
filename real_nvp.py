@@ -137,7 +137,7 @@ for e in range(num_epochs):
         optimizer.step()
 
     # the average loss.
-    if t % 10 == 0:
+    if e % 10 == 0:
         print('iter %s:' % t, 'loss = %.3f' % loss)
 
 #========================================================================================================
@@ -145,7 +145,7 @@ for e in range(num_epochs):
 z1 = flow.f(y_tr)[0].detach().cpu().numpy()
 x1 = y_tr
 z2 = np.random.multivariate_normal(np.zeros(dim_in), np.eye(dim_in), x1.shape[0])
-x2 = flow.sample(z2.shape[0])
+x2 = flow.sample(z2)
 
 # rescale the results
 x1 = x1*std_y + mu_y
