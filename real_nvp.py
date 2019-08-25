@@ -19,12 +19,12 @@ hdulist = fits.open('../Catalog_Apogee_Payne.fits.gz')
 Teff = hdulist[1].data["Teff"]
 Logg = hdulist[1].data["Logg"]
 FeH = hdulist[1].data["FeH"]
-CH = hdulist[1].data["CH"]
-NH = hdulist[1].data["NH"]
-OH = hdulist[1].data["OH"]
-MgH = hdulist[1].data["MgH"]
+CFe = hdulist[1].data["CH"] - hdulist[1].data["FeH"]
+NFe = hdulist[1].data["NH"] - hdulist[1].data["FeH"]
+OFe = hdulist[1].data["OH"] - hdulist[1].data["FeH"]
+MgFe = hdulist[1].data["MgH"] - hdulist[1].data["FeH"]
 
-y_tr = np.vstack([Teff,Logg,FeH,CH,NH,OH,MgH]).T
+y_tr = np.vstack([Teff,Logg,FeH,CFe,NFe,OFe,MgFe]).T
 
 # convert into torch
 y_tr = torch.from_numpy(y_tr).type(torch.cuda.FloatTensor)
