@@ -102,7 +102,7 @@ prior = distributions.MultivariateNormal(torch.zeros(dim_in, device='cuda'),\
                                          torch.eye(dim_in, device='cuda'))
 
 flow = RealNVP(nets, nett, masks, prior)
-low.cuda()
+flow.cuda()
 
 
 
