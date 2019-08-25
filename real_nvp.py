@@ -162,6 +162,9 @@ for e in range(num_epochs):
         print('iter %s:' % e, 'loss = %.3f' % loss)
 
 #========================================================================================================
+# save models
+torch.save(flow, 'flow_final.pt')
+
 # sample results
 z1 = flow.f(y_tr)[0].detach().cpu().numpy()
 x1 = y_tr
