@@ -110,7 +110,7 @@ flow.cuda()
 # In [4]
 # optimizing flow models
 optimizer = torch.optim.Adam([p for p in flow.parameters() if p.requires_grad==True], lr=1e-4)
-num_epoch = 1001
+num_epoch = 5001
 
 for t in range(num_epoch):
     loss = -flow.log_prob(y_tr).mean()
@@ -126,13 +126,19 @@ for t in range(num_epoch):
 #========================================================================================================
 # sample results
 z1 = flow.f(y_tr)[0].detach().cpu().numpy()
-x1 = y_tr.cpu().numpy()
+x1 = y_tr
 z2 = np.random.multivariate_normal(np.zeros(dim_in), np.eye(dim_in), x1.shape[0])
-x2 = flow.sample(x1.shape[0]).detach().cpu().numpy()
+x2 = flow.sample(x1.shape[0])
+print('x1', x1)
+print('x2', x2)
 
 # rescale the results
 x1 = x1*std_y + mu_y
 x2 = x2*std_y + mu_y
+
+# convert back to numpy
+x1 = x1.detach().cpu().numpy()
+x2 = x2.detach().cpu().numpy()
 
 # save results
 np.savez("real_nvp_results.npz",\
