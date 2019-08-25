@@ -100,6 +100,8 @@ masks = torch.from_numpy(np.array(masks).astype(np.float32))
 masks.to(device)
 prior = distributions.MultivariateNormal(torch.zeros(dim_in, device='cuda'),\
                                          torch.eye(dim_in, device='cuda'))
+
+# intiate flow
 flow = RealNVP(nets, nett, masks, prior)
 flow.cuda()
 
@@ -107,6 +109,7 @@ flow.cuda()
 #=======================================================================================================
 # In [4]
 # break into batches
+batch_size = 2048
 nsamples = y_tr.shape[0]
 nbatches = nsamples // batch_size
 
