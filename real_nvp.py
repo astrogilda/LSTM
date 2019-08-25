@@ -86,7 +86,7 @@ dim_in = y_tr.shape[-1]
 
 nets = lambda: nn.Sequential(nn.Linear(dim_in, num_neurons), nn.LeakyReLU(),\
                              nn.Linear(num_neurons, num_neurons), nn.LeakyReLU(),\
-                             nn.Linear(num_neurons, dim_in)).cuda()
+                             nn.Linear(num_neurons, dim_in), nn.Tanh()).cuda()
 nett = lambda: nn.Sequential(nn.Linear(dim_in, num_neurons), nn.LeakyReLU(),\
                              nn.Linear(num_neurons, num_neurons), nn.LeakyReLU(),\
                              nn.Linear(num_neurons, dim_in)).cuda()
