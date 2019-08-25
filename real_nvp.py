@@ -19,9 +19,12 @@ hdulist = fits.open('../Catalog_Apogee_Payne.fits.gz')
 Teff = hdulist[1].data["Teff"]
 Logg = hdulist[1].data["Logg"]
 FeH = hdulist[1].data["FeH"]
-MgFe = hdulist[1].data["MgH"] - hdulist[1].data["FeH"]
+CH = hdulist[1].data["CH"]
+NH = hdulist[1].data["NH"]
+OH = hdulist[1].data["OH"]
+MgH = hdulist[1].data["MgH"]
 
-y_tr = np.vstack([Teff,Logg,FeH,MgFe]).T
+y_tr = np.vstack([Teff,Logg,FeH,CH,NH,OH,MgH]).T
 
 # convert into torch
 y_tr = torch.from_numpy(y_tr).type(torch.cuda.FloatTensor)
@@ -76,7 +79,7 @@ class RealNVP(nn.Module):
 # In [3]:
 # define network
 device = torch.device("cuda")
-num_neurons = 50
+num_neurons = 100
 
 # input dimension
 dim_in = y_tr.shape[-1]
@@ -89,7 +92,7 @@ nett = lambda: nn.Sequential(nn.Linear(dim_in, num_neurons), nn.LeakyReLU(),\
                              nn.Linear(num_neurons, dim_in)).cuda()
 
 # define mask
-num_layers = 5
+num_layers = 10
 masks = []
 for i in range(num_layers):
     mask_layer = np.random.randint(2,size=(dim_in))
@@ -110,7 +113,7 @@ flow.cuda()
 #=======================================================================================================
 # In [4]
 # number of epoch and batch size
-num_epochs = 201
+num_epochs = 1001
 batch_size = 2048
 
 # break into batches
