@@ -19,9 +19,9 @@ hdulist = fits.open('../Catalog_Apogee_Payne.fits.gz')
 Teff = hdulist[1].data["Teff"]
 Logg = hdulist[1].data["Logg"]
 FeH = hdulist[1].data["FeH"]
+MgFe = hdulist[1].data["MgH"] - hdulist[1].data["FeH"]
 
-y_tr = np.vstack([Teff,Logg,FeH]).T
-print(y_tr.shape)
+y_tr = np.vstack([Teff,Logg,FeH,MgFe]).T
 
 # convert into torch
 y_tr = torch.from_numpy(y_tr).type(torch.cuda.FloatTensor)
@@ -97,6 +97,8 @@ for i in range(num_layers):
     masks.append(1-mask_layer)
 masks = torch.from_numpy(np.array(masks).astype(np.float32))
 masks.to(device)
+
+# set prior
 prior = distributions.MultivariateNormal(torch.zeros(dim_in, device='cuda'),\
                                          torch.eye(dim_in, device='cuda'))
 
