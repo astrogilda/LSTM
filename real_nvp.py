@@ -119,7 +119,7 @@ num_epoch = 5001
 
 #-------------------------------------------------------------------------------------------------------
 # number of epoch
-num_epoch = 5001
+num_epochs = 5001
 
 # train the network
 for e in range(num_epochs):
