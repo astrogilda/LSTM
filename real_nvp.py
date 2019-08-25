@@ -142,7 +142,7 @@ for e in range(num_epochs):
 
 #========================================================================================================
 # sample results
-z1 = flow.f(y_tr)[0].detach().cpu().numpy()
+z1 = flow.f(y_tr).detach().cpu().numpy()
 x1 = y_tr
 z2 = np.random.multivariate_normal(np.zeros(dim_in), np.eye(dim_in), x1.shape[0])
 x2 = flow.sample(z2)
