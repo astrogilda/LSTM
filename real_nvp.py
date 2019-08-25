@@ -118,6 +118,9 @@ optimizer = torch.optim.Adam([p for p in flow.parameters() if p.requires_grad==T
 num_epoch = 5001
 
 #-------------------------------------------------------------------------------------------------------
+# number of epoch
+num_epoch = 5001
+
 # train the network
 for e in range(num_epochs):
 
