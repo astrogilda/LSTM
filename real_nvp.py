@@ -57,7 +57,7 @@ class RealNVP(nn.Module):
         return x
 
     def f(self, x):
-        log_det_J, z = x.new_zeros(x.shape[0]), x
+        z = x
         for i in reversed(range(len(self.t))):
             z_ = self.mask[i] * z
             s = self.s[i](z_) * (1-self.mask[i])
@@ -78,8 +78,7 @@ class RealNVP(nn.Module):
 
 #=======================================================================================================
 # In [3]:
-# the latent dimension
-# the latent dimension
+# define network
 device = torch.device("cuda")
 num_neurons = 10
 
@@ -90,6 +89,7 @@ nett = lambda: nn.Sequential(nn.Linear(dim_in, num_neurons), nn.LeakyReLU(),\
                              nn.Linear(num_neurons, num_neurons), nn.LeakyReLU(),\
                              nn.Linear(num_neurons, dim_in)).cuda()
 
+# define mask
 num_layers = 3
 masks = []
 for i in range(num_layers):
@@ -100,28 +100,41 @@ masks = torch.from_numpy(np.array(masks).astype(np.float32))
 masks.to(device)
 prior = distributions.MultivariateNormal(torch.zeros(dim_in, device='cuda'),\
                                          torch.eye(dim_in, device='cuda'))
-
 flow = RealNVP(nets, nett, masks, prior)
 flow.cuda()
 
 
-
 #=======================================================================================================
 # In [4]
+# break into batches
+nsamples = y_tr.shape[0]
+nbatches = nsamples // batch_size
+
 # optimizing flow models
 optimizer = torch.optim.Adam([p for p in flow.parameters() if p.requires_grad==True], lr=1e-4)
 num_epoch = 5001
 
-for t in range(num_epoch):
-    loss = -flow.log_prob(y_tr).mean()
+#-------------------------------------------------------------------------------------------------------
+# train the network
+for e in range(num_epochs):
 
-    optimizer.zero_grad()
-    loss.backward(retain_graph=True)
-    optimizer.step()
+    # Randomly permute the data. If necessary, transfer the permutation to the
+    # GPU.
+    perm = torch.randperm(nsamples)
+    perm = perm.cuda()
 
+    # For each batch, calculate the gradient with respect to the loss and take
+    # one step.
+    for i in range(nbatches):
+        idx = perm[i * batch_size : (i+1) * batch_size]
+        loss = -flow.log_prob(y_tr[idx]).mean()
+        optimizer.zero_grad()
+        loss.backward(retain_graph=True)
+        optimizer.step()
+
+    # the average loss.
     if t % 50 == 0:
         print('iter %s:' % t, 'loss = %.3f' % loss)
-
 
 #========================================================================================================
 # sample results
@@ -129,8 +142,6 @@ z1 = flow.f(y_tr)[0].detach().cpu().numpy()
 x1 = y_tr
 z2 = np.random.multivariate_normal(np.zeros(dim_in), np.eye(dim_in), x1.shape[0])
 x2 = flow.sample(x1.shape[0])
-print('x1', x1)
-print('x2', x2)
 
 # rescale the results
 x1 = x1*std_y + mu_y
@@ -141,7 +152,7 @@ x1 = x1.detach().cpu().numpy()
 x2 = x2.detach().cpu().numpy()
 
 # save results
-np.savez("real_nvp_results.npz",\
+np.savez("../real_nvp_results.npz",\
          z1 = z1,\
          z2 = z2,\
          x1 = x1,\
