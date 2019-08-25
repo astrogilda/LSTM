@@ -138,7 +138,7 @@ for e in range(num_epochs):
 
     # the average loss.
     if e % 10 == 0:
-        print('iter %s:' % t, 'loss = %.3f' % loss)
+        print('iter %s:' % e, 'loss = %.3f' % loss)
 
 #========================================================================================================
 # sample results
