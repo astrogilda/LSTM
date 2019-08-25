@@ -1,3 +1,4 @@
+# In [0]:
 # import packages
 import numpy as np
 
@@ -6,10 +7,12 @@ from torch import nn
 from torch import distributions
 from torch.nn.parameter import Parameter
 from torch.autograd import Variable
+
 from astropy.io import fits
 
 
 #========================================================================================================
+# In [1]:
 # import training set
 # restore data
 hdulist = fits.open('../Catalog_Apogee_Payne.fits.gz')
@@ -19,6 +22,9 @@ FeH = hdulist[1].data["FeH"]
 
 y_tr = np.vstack([Teff,Logg,FeH]).T
 print(y_tr.shape)
+
+# convert into torch
+y_tr = torch.from_numpy(y_tr).type(torch.cuda.FloatTensor)
 
 # input dimension
 dim_in = y_tr.shape[-1]
@@ -30,6 +36,7 @@ y_tr = (y_tr - mu_y) / std_y
 
 
 #=======================================================================================================
+# In [2]:
 # define normalizing flow
 class RealNVP(nn.Module):
     def __init__(self, nets, nett, mask, prior):
@@ -70,10 +77,11 @@ class RealNVP(nn.Module):
 
 
 #=======================================================================================================
+# In [3]:
 # the latent dimension
 # the latent dimension
 device = torch.device("cuda")
-num_neurons = 50
+num_neurons = 10
 
 nets = lambda: nn.Sequential(nn.Linear(dim_in, num_neurons), nn.LeakyReLU(),\
                              nn.Linear(num_neurons, num_neurons), nn.LeakyReLU(),\
@@ -82,7 +90,7 @@ nett = lambda: nn.Sequential(nn.Linear(dim_in, num_neurons), nn.LeakyReLU(),\
                              nn.Linear(num_neurons, num_neurons), nn.LeakyReLU(),\
                              nn.Linear(num_neurons, dim_in)).cuda()
 
-num_layers = 5
+num_layers = 3
 masks = []
 for i in range(num_layers):
     mask_layer = np.random.randint(2,size=(dim_in))
@@ -90,15 +98,16 @@ for i in range(num_layers):
     masks.append(1-mask_layer)
 masks = torch.from_numpy(np.array(masks).astype(np.float32))
 masks.to(device)
-prior = distributions.MultivariateNormal(torch.zeros(dim_dist, device='cuda'),\
-                                         torch.eye(dim_dist, device='cuda'))
+prior = distributions.MultivariateNormal(torch.zeros(dim_in, device='cuda'),\
+                                         torch.eye(dim_in, device='cuda'))
 
 flow = RealNVP(nets, nett, masks)
-flow.cuda()
+low.cuda()
 
 
 
 #=======================================================================================================
+# In [4]
 # optimizing flow models
 optimizer = torch.optim.Adam([p for p in flow.parameters() if p.requires_grad==True], lr=1e-4)
 num_epoch = 1001
@@ -120,6 +129,10 @@ z1 = flow.f(y_tr)[0].detach().cpu().numpy()
 x1 = y_tr.cpu().numpy()
 z2 = np.random.multivariate_normal(np.zeros(dim_in), np.eye(dim_in), x1.shape[0])
 x2 = flow.sample(x1.shape[0]).detach().cpu().numpy()
+
+# rescale the results
+x1 = x1*std_y + mu_y
+x2 = x2*std_y + mu_y
 
 # save results
 np.savez("real_nvp_results.npz",\
