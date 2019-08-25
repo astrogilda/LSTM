@@ -97,6 +97,7 @@ flow = RealNVP(nets, nett, masks)
 flow.cuda()
 
 
+
 #=======================================================================================================
 # optimizing flow models
 optimizer = torch.optim.Adam([p for p in flow.parameters() if p.requires_grad==True], lr=1e-4)
