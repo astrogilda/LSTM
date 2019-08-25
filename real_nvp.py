@@ -16,14 +16,30 @@ from astropy.io import fits
 # import training set
 # restore data
 hdulist = fits.open('../Catalog_Apogee_Payne.fits.gz')
+
 Teff = hdulist[1].data["Teff"]
 Logg = hdulist[1].data["Logg"]
 FeH = hdulist[1].data["FeH"]
+
 CFe = hdulist[1].data["CH"] - hdulist[1].data["FeH"]
 NFe = hdulist[1].data["NH"] - hdulist[1].data["FeH"]
 OFe = hdulist[1].data["OH"] - hdulist[1].data["FeH"]
 MgFe = hdulist[1].data["MgH"] - hdulist[1].data["FeH"]
 
+MgFe = hdulist[1].data["AlH"] - hdulist[1].data["FeH"]
+MgFe = hdulist[1].data["SiH"] - hdulist[1].data["FeH"]
+MgFe = hdulist[1].data["SH"] - hdulist[1].data["FeH"]
+MgFe = hdulist[1].data["KH"] - hdulist[1].data["FeH"]
+
+MgFe = hdulist[1].data["CaH"] - hdulist[1].data["FeH"]
+MgFe = hdulist[1].data["TiH"] - hdulist[1].data["FeH"]
+MgFe = hdulist[1].data["CrH"] - hdulist[1].data["FeH"]
+MgFe = hdulist[1].data["MnH"] - hdulist[1].data["FeH"]
+
+MgFe = hdulist[1].data["NiH"] - hdulist[1].data["FeH"]
+MgFe = hdulist[1].data["CuH"] - hdulist[1].data["FeH"]
+
+# make training catalog
 y_tr = np.vstack([Teff,Logg,FeH,CFe,NFe,OFe,MgFe]).T
 
 # convert into torch
@@ -114,7 +130,7 @@ flow.cuda()
 #=======================================================================================================
 # In [4]
 # number of epoch and batch size
-num_epochs = 1001
+num_epochs = 501
 batch_size = 2048
 
 # break into batches
