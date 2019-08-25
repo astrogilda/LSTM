@@ -26,9 +26,6 @@ print(y_tr.shape)
 # convert into torch
 y_tr = torch.from_numpy(y_tr).type(torch.cuda.FloatTensor)
 
-# input dimension
-dim_in = y_tr.shape[-1]
-
 # standardize
 mu_y = y_tr.mean(dim=0)
 std_y = y_tr.std(dim=0)
@@ -57,7 +54,7 @@ class RealNVP(nn.Module):
         return x
 
     def f(self, x):
-        z = x
+        log_det_J, z = x.new_zeros(x.shape[0]), x
         for i in reversed(range(len(self.t))):
             z_ = self.mask[i] * z
             s = self.s[i](z_) * (1-self.mask[i])
@@ -70,8 +67,7 @@ class RealNVP(nn.Module):
         z, logp = self.f(x)
         return self.prior.log_prob(z) + logp
 
-    def sample(self, batchSize):
-        z = self.prior.sample((batchSize, 1))
+    def sample(self, z):
         x = self.g(z)
         return x
 
@@ -81,6 +77,9 @@ class RealNVP(nn.Module):
 # define network
 device = torch.device("cuda")
 num_neurons = 10
+
+# input dimension
+dim_in = y_tr.shape[-1]
 
 nets = lambda: nn.Sequential(nn.Linear(dim_in, num_neurons), nn.LeakyReLU(),\
                              nn.Linear(num_neurons, num_neurons), nn.LeakyReLU(),\
@@ -108,19 +107,18 @@ flow.cuda()
 
 #=======================================================================================================
 # In [4]
-# break into batches
+# number of epoch and batch size
+num_epochs = 5001
 batch_size = 2048
+
+# break into batches
 nsamples = y_tr.shape[0]
 nbatches = nsamples // batch_size
 
 # optimizing flow models
 optimizer = torch.optim.Adam([p for p in flow.parameters() if p.requires_grad==True], lr=1e-4)
-num_epoch = 5001
 
 #-------------------------------------------------------------------------------------------------------
-# number of epoch
-num_epochs = 5001
-
 # train the network
 for e in range(num_epochs):
 
@@ -139,7 +137,7 @@ for e in range(num_epochs):
         optimizer.step()
 
     # the average loss.
-    if t % 50 == 0:
+    if t % 10 == 0:
         print('iter %s:' % t, 'loss = %.3f' % loss)
 
 #========================================================================================================
@@ -147,7 +145,7 @@ for e in range(num_epochs):
 z1 = flow.f(y_tr)[0].detach().cpu().numpy()
 x1 = y_tr
 z2 = np.random.multivariate_normal(np.zeros(dim_in), np.eye(dim_in), x1.shape[0])
-x2 = flow.sample(x1.shape[0])
+x2 = flow.sample(z2.shape[0])
 
 # rescale the results
 x1 = x1*std_y + mu_y
