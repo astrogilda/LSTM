@@ -96,7 +96,7 @@ class RealNVP(nn.Module):
 # In [3]:
 # define network
 device = torch.device("cuda")
-num_neurons = 100
+num_neurons = 500
 
 # input dimension
 dim_in = y_tr.shape[-1]
@@ -130,7 +130,7 @@ flow.cuda()
 #=======================================================================================================
 # In [4]
 # number of epoch and batch size
-num_epochs = 501
+num_epochs = 2001
 batch_size = 2048
 
 # break into batches
