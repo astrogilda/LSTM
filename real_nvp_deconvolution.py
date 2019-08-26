@@ -14,7 +14,7 @@ from astropy.io import fits
 #========================================================================================================
 # In [1]:
 # import training set
-temp = np.load("../mock_gaussian.npz")
+temp = np.load("../mock_gaussians.npz")
 y_tr = temp["age"] # noiseless
 
 # convert into torch
