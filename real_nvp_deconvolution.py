@@ -15,7 +15,7 @@ from astropy.io import fits
 # In [1]:
 # import training set
 temp = np.load("../mock_gaussians.npz")
-y_tr = temp["age"] # noiseless
+y_tr = temp["age_noised"] # noiseless
 
 # convert into torch
 y_tr = torch.from_numpy(y_tr).type(torch.cuda.FloatTensor)
@@ -105,7 +105,7 @@ flow.cuda()
 #=======================================================================================================
 # In [4]
 # number of epoch and batch size
-num_epochs = 501
+num_epochs = 101
 batch_size = 1028
 
 # break into batches
