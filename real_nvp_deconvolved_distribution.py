@@ -71,7 +71,7 @@ class RealNVP(nn.Module):
 # In [3]:
 # define network
 device = torch.device("cuda")
-num_neurons = 300
+num_neurons = 50
 
 # input dimension
 dim_in = y_tr.shape[-1]
@@ -84,7 +84,7 @@ nett = lambda: nn.Sequential(nn.Linear(dim_in, num_neurons), nn.LeakyReLU(),\
                              nn.Linear(num_neurons, dim_in)).cuda()
 
 # define mask
-num_layers = 10
+num_layers = 5
 masks = []
 for i in range(num_layers):
     mask_layer = np.random.randint(2,size=(dim_in))
@@ -103,43 +103,50 @@ flow.cuda()
 
 
 #=======================================================================================================
+# restore models
+flow = torch.load("flow_final.pt") # load in cpu
+flow.eval()
+
+
+#=======================================================================================================
 # In [4]
 # number of epoch and batch size
-num_epochs = 101
-batch_size = 1028
+#num_epochs = 101
+#batch_size = 1028
 
 # break into batches
-nsamples = y_tr.shape[0]
-nbatches = nsamples // batch_size
+#nsamples = y_tr.shape[0]
+#nbatches = nsamples // batch_size
 
 # optimizing flow models
-optimizer = torch.optim.Adam([p for p in flow.parameters() if p.requires_grad==True], lr=1e-4)
+#optimizer = torch.optim.Adam([p for p in flow.parameters() if p.requires_grad==True], lr=1e-4)
 
 #-------------------------------------------------------------------------------------------------------
 # train the network
-for e in range(num_epochs):
+#for e in range(num_epochs):
 
     # randomly permute the data
-    perm = torch.randperm(nsamples)
-    perm = perm.cuda()
+    #perm = torch.randperm(nsamples)
+    #perm = perm.cuda()
 
     # For each batch, calculate the gradient with respect to the loss and take
     # one step.
-    for i in range(nbatches):
-        idx = perm[i * batch_size : (i+1) * batch_size]
-        loss = -flow.log_prob(y_tr[idx]).mean()
-        optimizer.zero_grad()
-        loss.backward(retain_graph=True)
-        optimizer.step()
+    #for i in range(nbatches):
+    #    idx = perm[i * batch_size : (i+1) * batch_size]
+    #    loss = -flow.log_prob(y_tr[idx]).mean()
+    #    optimizer.zero_grad()
+    #    loss.backward(retain_graph=True)
+    #    optimizer.step()
 
     # the average loss.
-    if e % 10 == 0:
-        print('iter %s:' % e, 'loss = %.3f' % loss)
+    #if e % 10 == 0:
+    #    print('iter %s:' % e, 'loss = %.3f' % loss)
+
+#-------------------------------------------------------------------------------------------------------
+# save models
+#torch.save(flow, 'flow_final.pt')
 
 #========================================================================================================
-# save models
-torch.save(flow, 'flow_final.pt')
-
 # sample results
 z1 = flow.f(y_tr)[0].detach().cpu().numpy()
 x1 = y_tr
