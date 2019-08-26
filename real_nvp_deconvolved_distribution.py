@@ -140,13 +140,10 @@ for e in range(num_epochs):
         idx = perm[i * batch_size : (i+1) * batch_size]
 
         # map it to the devolved space
-        _, x = flow2.f(y_tr[idx])
-        print(y_tr[idx].shape)
-        print(x.shape)
+        x, _ = flow2.f(y_tr[idx])
 
         # convolve it back to the observed space
         x += torch.randn(size=x.shape).type(torch.cuda.FloatTensor)
-        print(x.shape)
 
         # use the previously trained flow to evaluate the lieklihood
         loss = -flow.log_prob(x).mean()
