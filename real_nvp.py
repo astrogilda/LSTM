@@ -26,21 +26,25 @@ NFe = hdulist[1].data["NH"] - hdulist[1].data["FeH"]
 OFe = hdulist[1].data["OH"] - hdulist[1].data["FeH"]
 MgFe = hdulist[1].data["MgH"] - hdulist[1].data["FeH"]
 
-MgFe = hdulist[1].data["AlH"] - hdulist[1].data["FeH"]
-MgFe = hdulist[1].data["SiH"] - hdulist[1].data["FeH"]
-MgFe = hdulist[1].data["SH"] - hdulist[1].data["FeH"]
-MgFe = hdulist[1].data["KH"] - hdulist[1].data["FeH"]
+AlFe = hdulist[1].data["AlH"] - hdulist[1].data["FeH"]
+SiFe = hdulist[1].data["SiH"] - hdulist[1].data["FeH"]
+SFe = hdulist[1].data["SH"] - hdulist[1].data["FeH"]
+KFe = hdulist[1].data["KH"] - hdulist[1].data["FeH"]
 
-MgFe = hdulist[1].data["CaH"] - hdulist[1].data["FeH"]
-MgFe = hdulist[1].data["TiH"] - hdulist[1].data["FeH"]
-MgFe = hdulist[1].data["CrH"] - hdulist[1].data["FeH"]
-MgFe = hdulist[1].data["MnH"] - hdulist[1].data["FeH"]
+CaFe = hdulist[1].data["CaH"] - hdulist[1].data["FeH"]
+TiFe = hdulist[1].data["TiH"] - hdulist[1].data["FeH"]
+CrFe = hdulist[1].data["CrH"] - hdulist[1].data["FeH"]
+MnFe = hdulist[1].data["MnH"] - hdulist[1].data["FeH"]
 
-MgFe = hdulist[1].data["NiH"] - hdulist[1].data["FeH"]
-MgFe = hdulist[1].data["CuH"] - hdulist[1].data["FeH"]
+NiFe = hdulist[1].data["NiH"] - hdulist[1].data["FeH"]
+CuFe = hdulist[1].data["CuH"] - hdulist[1].data["FeH"]
 
 # make training catalog
-y_tr = np.vstack([Teff,Logg,FeH,CFe,NFe,OFe,MgFe]).T
+y_tr = np.vstack([Teff,Logg,FeH,\
+                  CFe, NFe, OFe, MgFe,\
+                  AlFe, SiFe, SFe, KFe,\
+                  CaFe, TiFe, CrFe, MnFe,\
+                  NiFe, CuFe]).T
 
 # convert into torch
 y_tr = torch.from_numpy(y_tr).type(torch.cuda.FloatTensor)
@@ -96,7 +100,7 @@ class RealNVP(nn.Module):
 # In [3]:
 # define network
 device = torch.device("cuda")
-num_neurons = 500
+num_neurons = 300
 
 # input dimension
 dim_in = y_tr.shape[-1]
