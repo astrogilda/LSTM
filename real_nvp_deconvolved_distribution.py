@@ -103,7 +103,7 @@ prior = distributions.MultivariateNormal(torch.zeros(dim_in, device='cuda'),\
 flow = torch.load("flow_final.pt") # load in cpu
 flow.eval()
 for p in flow.parameters():
-    print(p.requies_grad)
+    print(p.requires_grad)
 
 
 #=======================================================================================================
