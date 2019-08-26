@@ -145,7 +145,7 @@ for e in range(num_epochs):
         x, _ = flow2.f(y_tr[idx])
 
         # convolve it back to the observed space
-        x += torch.randn(size=x.shape).type(torch.cuda.FloatTensor)
+        #x += torch.randn(size=x.shape).type(torch.cuda.FloatTensor)
 
         # use the previously trained flow to evaluate the lieklihood
         loss = -flow.log_prob(x).mean()
