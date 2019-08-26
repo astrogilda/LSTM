@@ -99,14 +99,10 @@ prior = distributions.MultivariateNormal(torch.zeros(dim_in, device='cuda'),\
 
 
 #=======================================================================================================
-# intiate flow
-flow = RealNVP(nets, nett, masks, prior)
-flow.cuda()
-
 # restore models
 flow = torch.load("flow_final.pt") # load in cpu
 flow.eval()
-
+print(flow.requires_grad)
 
 #=======================================================================================================
 # another flow for deconvolved distribution
@@ -180,7 +176,7 @@ x1 = x1.detach().cpu().numpy()
 x2 = x2.detach().cpu().numpy()
 
 # save results
-np.savez("../real_nvp_deconvolution_results2.npz",\
+np.savez("../real_nvp_deconvolution_results.npz",\
          z1 = z1,\
          z2 = z2,\
          x1 = x1,\
