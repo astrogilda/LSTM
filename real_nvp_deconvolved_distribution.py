@@ -71,7 +71,7 @@ class RealNVP(nn.Module):
 # In [3]:
 # define network
 device = torch.device("cuda")
-num_neurons = 50
+num_neurons = 100
 
 # input dimension
 dim_in = y_tr.shape[-1]
