@@ -21,9 +21,9 @@ y_tr = temp["age_noised"] # with noise
 y_tr = torch.from_numpy(y_tr).type(torch.cuda.FloatTensor)
 
 # standardize
-mu_y = y_tr.mean(dim=0)
-std_y = y_tr.std(dim=0)
-y_tr = (y_tr - mu_y) / std_y
+#mu_y = y_tr.mean(dim=0)
+#std_y = y_tr.std(dim=0)
+#y_tr = (y_tr - mu_y) / std_y
 
 
 #=======================================================================================================
@@ -125,6 +125,8 @@ nbatches = nsamples // batch_size
 
 # optimizing flow models
 optimizer = torch.optim.Adam([p for p in flow2.parameters() if p.requires_grad==True], lr=1e-4)
+
+# initiate noise array
 
 #-------------------------------------------------------------------------------------------------------
 # train the network
