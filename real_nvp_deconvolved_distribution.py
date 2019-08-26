@@ -102,9 +102,9 @@ prior = distributions.MultivariateNormal(torch.zeros(dim_in, device='cuda'),\
 # restore models
 flow = torch.load("flow_final.pt") # load in cpu
 flow.eval()
-for p in flow2.parameters():
+for p in flow.parameters():
     print(p.requies_grad)
-    
+
 
 #=======================================================================================================
 # another flow for deconvolved distribution
