@@ -15,15 +15,15 @@ from astropy.io import fits
 # In [1]:
 # import training set
 temp = np.load("../mock_gaussians.npz")
-y_tr = temp["age_noised"] # noiseless
+y_tr = temp["age_noised"] # with noise
 
 # convert into torch
 y_tr = torch.from_numpy(y_tr).type(torch.cuda.FloatTensor)
 
 # standardize
-mu_y = y_tr.mean(dim=0)
-std_y = y_tr.std(dim=0)
-y_tr = (y_tr - mu_y) / std_y
+#mu_y = y_tr.mean(dim=0)
+#std_y = y_tr.std(dim=0)
+#y_tr = (y_tr - mu_y) / std_y
 
 
 #=======================================================================================================
@@ -147,8 +147,8 @@ z2 = np.random.multivariate_normal(np.zeros(dim_in), np.eye(dim_in), x1.shape[0]
 x2 = flow.sample(torch.from_numpy(z2).type(torch.cuda.FloatTensor))
 
 # rescale the results
-x1 = x1*std_y + mu_y
-x2 = x2*std_y + mu_y
+#x1 = x1*std_y + mu_y
+#x2 = x2*std_y + mu_y
 
 # convert back to numpy
 x1 = x1.detach().cpu().numpy()
