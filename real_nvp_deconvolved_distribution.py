@@ -166,7 +166,7 @@ x1 = y_tr
 z2 = np.random.multivariate_normal(np.zeros(dim_in), np.eye(dim_in), x1.shape[0])
 
 # map from the observed space to the normal space
-x2 = flow2.f(flow.sample(torch.from_numpy(z2).type(torch.cuda.FloatTensor)))
+x2, _ = flow2.f(flow.sample(torch.from_numpy(z2).type(torch.cuda.FloatTensor)))
 
 # rescale the results
 #x1 = x1*std_y + mu_y
