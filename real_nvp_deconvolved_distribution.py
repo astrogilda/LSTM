@@ -142,7 +142,7 @@ for e in range(num_epochs):
         idx = perm[i * batch_size : (i+1) * batch_size]
 
         # map it to the devolved space
-        x, _ = flow2.f(y_tr[idx])
+        x = flow2.g(y_tr[idx])
 
         # convolve it back to the observed space
         #x += torch.randn(size=x.shape).type(torch.cuda.FloatTensor)
@@ -159,6 +159,7 @@ for e in range(num_epochs):
 
 #-------------------------------------------------------------------------------------------------------
 # save models
+torch.save(flow, 'flow3_final.pt')
 torch.save(flow2, 'flow2_final.pt')
 
 #========================================================================================================
@@ -168,7 +169,7 @@ x1 = y_tr
 z2 = np.random.multivariate_normal(np.zeros(dim_in), np.eye(dim_in), x1.shape[0])
 
 # map from the observed space to the normal space
-x2, _ = flow2.f(flow.sample(torch.from_numpy(z2).type(torch.cuda.FloatTensor)))
+x2 = flow2.g(flow.sample(torch.from_numpy(z2).type(torch.cuda.FloatTensor)))
 
 # rescale the results
 #x1 = x1*std_y + mu_y
