@@ -140,7 +140,7 @@ for e in range(num_epochs):
 
         # map it to the devolved space
         x, logp2 = flow2.f(y_tr[idx])
-        x += torch.randn(size=y_tr[idx].shape).type(torch.cuda.FloatTensor)*10.
+        x += torch.randn(size=y_tr[idx].shape).type(torch.cuda.FloatTensor)*(logp2.exp())
 
         # convolve it back to the observed space
         z, logp = flow.f(x)
