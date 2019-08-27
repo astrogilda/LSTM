@@ -140,14 +140,13 @@ for e in range(num_epochs):
 
         # map it to the devolved space
         x, logp2 = flow2.f(y_tr[idx])
+
+        # convolve it back to the observed space
+        x += torch.randn(size=x.shape).type(torch.cuda.FloatTensor)
         z, logp = flow.f(x)
         loss = -(flow.prior.log_prob(z) + logp + logp2).mean()
 
-        # convolve it back to the observed space
-        #x += torch.randn(size=x.shape).type(torch.cuda.FloatTensor)
-
-        # use the previously trained flow to evaluate the lieklihood
-        #loss = -flow.log_prob(x).mean()
+        # gradient descent
         optimizer.zero_grad()
         loss.backward(retain_graph=True)
         optimizer.step()
