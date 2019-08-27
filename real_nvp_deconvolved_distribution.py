@@ -16,9 +16,11 @@ from astropy.io import fits
 # import training set
 temp = np.load("../mock_gaussians.npz")
 y_tr = temp["age_noised"] # with noise
+y_noise = temp["noise"]
 
 # convert into torch
 y_tr = torch.from_numpy(y_tr).type(torch.cuda.FloatTensor)
+y_noise = torch.from_numpy(y_noise).type(torch.cuda.FloatTensor)
 
 # standardize
 #mu_y = y_tr.mean(dim=0)
@@ -106,8 +108,8 @@ flow = torch.load("flow_final.pt") # load in cpu
 flow.eval()
 
 # disable gradient for the previous flow
-#for p in flow.parameters():
-#    p.requires_grad = False
+for p in flow.parameters():
+    p.requires_grad = False
 
 
 #=======================================================================================================
@@ -143,7 +145,8 @@ for e in range(num_epochs):
 
         # map it to the devolved space
         x, logp2 = flow2.f(y_tr[idx])
-        x += torch.randn(size=y_tr[idx].shape).type(torch.cuda.FloatTensor)
+        #x += torch.randn(size=y_tr[idx].shape).type(torch.cuda.FloatTensor)
+        x += y_noise[idx]
 
         # convolve it back to the observed space
         z, logp = flow.f(x)
