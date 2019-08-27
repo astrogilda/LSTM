@@ -56,7 +56,7 @@ class RealNVP(nn.Module):
             z = (1 - self.mask[i]) * (z - t) * torch.exp(-s) + z_
             log_det_J -= s.sum(dim=1)
         return z, log_det_J
-        
+
     def log_prob(self,x):
         z, logp = self.f(x)
         return self.prior.log_prob(z) + logp
@@ -205,7 +205,7 @@ x1 = y_tr
 z2 = np.random.multivariate_normal(np.zeros(dim_in), np.eye(dim_in), x1.shape[0])
 
 # map from the observed space to the normal space
-x2, _ = flow2.f(flow.sample(torch.from_numpy(z2).type(torch.cuda.FloatTensor)))
+x2, _ = flow2.f(flow.sample(torch.from_numpy(z2).type(torch.cuda.FloatTensor)),0)
 
 # rescale the results
 #x1 = x1*std_y + mu_y
