@@ -84,12 +84,15 @@ nett = lambda: nn.Sequential(nn.Linear(dim_in, num_neurons), nn.LeakyReLU(),\
 
 # define mask
 num_layers = 5
-masks = []
-for i in range(num_layers):
-    mask_layer = np.random.randint(2,size=(dim_in))
-    masks.append(mask_layer)
-    masks.append(1-mask_layer)
-masks = torch.from_numpy(np.array(masks).astype(np.float32))
+masks = torch.from_numpy(np.array([[0, 1], [1, 0]] * num_layers).astype(np.float32))
+
+#masks = []
+#for i in range(num_layers):
+#    mask_layer = np.random.randint(2,size=(dim_in))
+#    masks.append(mask_layer)
+#    masks.append(1-mask_layer)
+#masks = torch.from_numpy(np.array(masks).astype(np.float32))
+
 masks.to(device)
 
 # set prior
@@ -140,8 +143,8 @@ for e in range(num_epochs):
 
         # map it to the devolved space
         x, logp2 = flow2.f(y_tr[idx])
-        #x += torch.randn(size=y_tr[idx].shape).type(torch.cuda.FloatTensor)\
-        #                *(logp2.exp().expand(x.shape[::-1]).t())
+        x += torch.randn(size=y_tr[idx].shape).type(torch.cuda.FloatTensor)\
+                        *(logp2.exp().expand(x.shape[::-1]).t())
 
         # convolve it back to the observed space
         z, logp = flow.f(x)
