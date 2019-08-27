@@ -86,7 +86,7 @@ class RealNVP_noise(nn.Module):
             x = x_ + (1 - self.mask[i]) * (x * torch.exp(s) + t)
         return x
 
-    def f(self, x, noise):
+    def f(self, x):
         log_det_J, z = x.new_zeros(x.shape[0]), x
         for i in reversed(range(len(self.t))):
             z_ = self.mask[i] * z
@@ -94,7 +94,7 @@ class RealNVP_noise(nn.Module):
             t = self.t[i](z_) * (1-self.mask[i])
             z = (1 - self.mask[i]) * (z - t) * torch.exp(-s) + z_
             log_det_J -= s.sum(dim=1)
-        return z + noise, log_det_J
+        return z, log_det_J
 
     def log_prob(self,x):
         z, logp = self.f(x)
