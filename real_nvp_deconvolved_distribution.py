@@ -106,8 +106,8 @@ flow = torch.load("flow_final.pt") # load in cpu
 flow.eval()
 
 # disable gradient for the previous flow
-for p in flow.parameters():
-    p.requires_grad = False
+#for p in flow.parameters():
+#    p.requires_grad = False
 
 
 #=======================================================================================================
