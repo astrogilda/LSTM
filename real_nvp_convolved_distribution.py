@@ -85,12 +85,15 @@ nett = lambda: nn.Sequential(nn.Linear(dim_in, num_neurons), nn.LeakyReLU(),\
 
 # define mask
 num_layers = 5
-masks = []
-for i in range(num_layers):
-    mask_layer = np.random.randint(2,size=(dim_in))
-    masks.append(mask_layer)
-    masks.append(1-mask_layer)
-masks = torch.from_numpy(np.array(masks).astype(np.float32))
+masks = torch.from_numpy(np.array([[0, 1], [1, 0]] * num_layers).astype(np.float32))
+
+#masks = []
+#for i in range(num_layers):
+#    mask_layer = np.random.randint(2,size=(dim_in))
+#    masks.append(mask_layer)
+#    masks.append(1-mask_layer)
+#masks = torch.from_numpy(np.array(masks).astype(np.float32))
+
 masks.to(device)
 
 # set prior
