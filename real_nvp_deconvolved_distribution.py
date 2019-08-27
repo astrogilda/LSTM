@@ -56,7 +56,7 @@ class RealNVP(nn.Module):
             z = (1 - self.mask[i]) * (z - t) * torch.exp(-s) + z_
             log_det_J -= s.sum(dim=1)
         return z, log_det_J
-
+        
     def log_prob(self,x):
         z, logp = self.f(x)
         return self.prior.log_prob(z) + logp
