@@ -65,6 +65,45 @@ class RealNVP(nn.Module):
         x = self.g(z)
         return x
 
+#=======================================================================================================
+# In [2]:
+# define normalizing flow
+class RealNVP_noise(nn.Module):
+    def __init__(self, nets, nett, mask, prior):
+        super(RealNVP, self).__init__()
+
+        self.prior = prior
+        self.mask = nn.Parameter(mask, requires_grad=False)
+        self.t = torch.nn.ModuleList([nett() for _ in range(len(masks))])
+        self.s = torch.nn.ModuleList([nets() for _ in range(len(masks))])
+
+    def g(self, z):
+        x = z
+        for i in range(len(self.t)):
+            x_ = x*self.mask[i]
+            s = self.s[i](x_)*(1 - self.mask[i])
+            t = self.t[i](x_)*(1 - self.mask[i])
+            x = x_ + (1 - self.mask[i]) * (x * torch.exp(s) + t)
+        return x
+
+    def f(self, x, noise):
+        log_det_J, z = x.new_zeros(x.shape[0]), x
+        for i in reversed(range(len(self.t))):
+            z_ = self.mask[i] * z
+            s = self.s[i](z_) * (1-self.mask[i])
+            t = self.t[i](z_) * (1-self.mask[i])
+            z = (1 - self.mask[i]) * (z - t) * torch.exp(-s) + z_
+            log_det_J -= s.sum(dim=1)
+        return z + noise, log_det_J
+
+    def log_prob(self,x):
+        z, logp = self.f(x)
+        return self.prior.log_prob(z) + logp
+
+    def sample(self, z):
+        x = self.g(z)
+        return x
+
 
 #=======================================================================================================
 # In [3]:
@@ -109,7 +148,7 @@ for p in flow.parameters():
 
 #=======================================================================================================
 # another flow for deconvolved distribution
-flow2 = RealNVP(nets, nett, masks, prior)
+flow2 = RealNVP_noise(nets, nett, masks, prior)
 flow2.cuda()
 
 #-------------------------------------------------------------------------------------------------------
@@ -139,10 +178,10 @@ for e in range(num_epochs):
         idx = perm[i * batch_size : (i+1) * batch_size]
 
         # map it to the devolved space
-        x, logp2 = flow2.f(y_tr[idx])
+        noise = torch.randn(size=x.shape).type(torch.cuda.FloatTensor)
+        x, logp2 = flow2.f(y_tr[idx], noise)
 
         # convolve it back to the observed space
-        x += torch.randn(size=x.shape).type(torch.cuda.FloatTensor)
         z, logp = flow.f(x)
         loss = -(flow.prior.log_prob(z) + logp + logp2).mean()
 
