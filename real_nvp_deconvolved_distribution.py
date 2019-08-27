@@ -139,7 +139,7 @@ for e in range(num_epochs):
         idx = perm[i * batch_size : (i+1) * batch_size]
 
         # map it to the devolved space
-        x, logp2 = flow2.f(y_tr[idx])
+        x, logp2 = flow2.f(y_tr[idx]+torch.randn(size=y_tr[idx].shape).type(torch.cuda.FloatTensor))
         #x += torch.randn(size=y_tr[idx].shape).type(torch.cuda.FloatTensor)\
         #                *(logp2.exp().expand(x.shape[::-1]).t())
 
