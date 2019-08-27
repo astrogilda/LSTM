@@ -178,7 +178,7 @@ for e in range(num_epochs):
         idx = perm[i * batch_size : (i+1) * batch_size]
 
         # map it to the devolved space
-        noise = torch.randn(size=y_tr[idx].shape).type(torch.cuda.FloatTensor)
+        noise = torch.randn(size=y_tr[idx].shape).type(torch.cuda.FloatTensor)*100.
         noise.requires_grad = True
         x, logp2 = flow2.f(y_tr[idx], noise)
 
