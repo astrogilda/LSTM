@@ -139,8 +139,8 @@ for e in range(num_epochs):
         idx = perm[i * batch_size : (i+1) * batch_size]
 
         # map it to the devolved space
-        x, logp2 = flow2.f(y_tr[idx], noise)
-        x += torch.randn(size=y_tr[idx].shape).type(torch.cuda.FloatTensor)*(logp2.exp())
+        x, logp2 = flow2.f(y_tr[idx])
+        x += torch.randn(size=y_tr[idx].shape).type(torch.cuda.FloatTensor)*10.
 
         # convolve it back to the observed space
         z, logp = flow.f(x)
@@ -166,7 +166,7 @@ x1 = y_tr
 z2 = np.random.multivariate_normal(np.zeros(dim_in), np.eye(dim_in), x1.shape[0])
 
 # map from the observed space to the normal space
-x2, _ = flow2.f(flow.sample(torch.from_numpy(z2).type(torch.cuda.FloatTensor)),0)
+x2, _ = flow2.f(flow.sample(torch.from_numpy(z2).type(torch.cuda.FloatTensor)))
 
 # rescale the results
 #x1 = x1*std_y + mu_y
