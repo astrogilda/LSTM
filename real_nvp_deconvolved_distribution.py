@@ -70,7 +70,7 @@ class RealNVP(nn.Module):
 # define normalizing flow
 class RealNVP_noise(nn.Module):
     def __init__(self, nets, nett, mask, prior):
-        super(RealNVP, self).__init__()
+        super(RealNVP_noise, self).__init__()
 
         self.prior = prior
         self.mask = nn.Parameter(mask, requires_grad=False)
@@ -86,7 +86,7 @@ class RealNVP_noise(nn.Module):
             x = x_ + (1 - self.mask[i]) * (x * torch.exp(s) + t)
         return x
 
-    def f(self, x):
+    def f(self, x, noise):
         log_det_J, z = x.new_zeros(x.shape[0]), x
         for i in reversed(range(len(self.t))):
             z_ = self.mask[i] * z
@@ -94,7 +94,7 @@ class RealNVP_noise(nn.Module):
             t = self.t[i](z_) * (1-self.mask[i])
             z = (1 - self.mask[i]) * (z - t) * torch.exp(-s) + z_
             log_det_J -= s.sum(dim=1)
-        return z, log_det_J
+        return z + noise, log_det_J
 
     def log_prob(self,x):
         z, logp = self.f(x)
