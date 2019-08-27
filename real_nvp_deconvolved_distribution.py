@@ -179,6 +179,7 @@ for e in range(num_epochs):
 
         # map it to the devolved space
         noise = torch.randn(size=y_tr[idx].shape).type(torch.cuda.FloatTensor)
+        noise.requires_grad = True
         x, logp2 = flow2.f(y_tr[idx], noise)
 
         # convolve it back to the observed space
