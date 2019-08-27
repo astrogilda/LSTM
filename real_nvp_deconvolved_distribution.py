@@ -66,7 +66,6 @@ class RealNVP(nn.Module):
         return x
 
 
-
 #=======================================================================================================
 # In [3]:
 # define network
@@ -126,8 +125,6 @@ nbatches = nsamples // batch_size
 # optimizing flow models
 optimizer = torch.optim.Adam([p for p in flow2.parameters() if p.requires_grad==True], lr=1e-4)
 
-# initiate noise array
-
 #-------------------------------------------------------------------------------------------------------
 # train the network
 for e in range(num_epochs):
@@ -142,13 +139,15 @@ for e in range(num_epochs):
         idx = perm[i * batch_size : (i+1) * batch_size]
 
         # map it to the devolved space
-        x = flow2.g(y_tr[idx])
+        x, logp2 = flow2.f(y_tr[idx])
+        z, logp = flow.f(x)
+        loss = flow.prior.log_prob(z) + logp + logp2
 
         # convolve it back to the observed space
         #x += torch.randn(size=x.shape).type(torch.cuda.FloatTensor)
 
         # use the previously trained flow to evaluate the lieklihood
-        loss = -flow.log_prob(x).mean()
+        #loss = -flow.log_prob(x).mean()
         optimizer.zero_grad()
         loss.backward(retain_graph=True)
         optimizer.step()
@@ -169,7 +168,7 @@ x1 = y_tr
 z2 = np.random.multivariate_normal(np.zeros(dim_in), np.eye(dim_in), x1.shape[0])
 
 # map from the observed space to the normal space
-x2 = flow2.g(flow.sample(torch.from_numpy(z2).type(torch.cuda.FloatTensor)))
+x2, _ = flow2.f(flow.sample(torch.from_numpy(z2).type(torch.cuda.FloatTensor)))
 
 # rescale the results
 #x1 = x1*std_y + mu_y
