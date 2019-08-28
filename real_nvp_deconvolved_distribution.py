@@ -152,7 +152,7 @@ for e in range(num_epochs):
         # convolve it back to the observed space
         z, _ = flow.f(x)
         loss = -(flow.prior.log_prob(z) + logp + logp2).mean()
-
+        
         # gradient descent
         optimizer.zero_grad()
         loss.backward(retain_graph=True)
