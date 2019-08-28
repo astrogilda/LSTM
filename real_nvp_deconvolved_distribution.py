@@ -145,14 +145,13 @@ for e in range(num_epochs):
 
         # map it to the devolved space
         x, logp2 = flow2.f(y_tr[idx])
-        _, logp = flow.f(x)
         #x += torch.randn(size=y_tr[idx].shape).type(torch.cuda.FloatTensor)
         x += y_noise[idx]
 
         # convolve it back to the observed space
-        z, _ = flow.f(x)
+        z, logp = flow.f(x)
         loss = -(flow.prior.log_prob(z) + logp + logp2).mean()
-        
+
         # gradient descent
         optimizer.zero_grad()
         loss.backward(retain_graph=True)
