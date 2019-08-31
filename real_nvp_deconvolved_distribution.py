@@ -104,7 +104,7 @@ prior = distributions.MultivariateNormal(torch.zeros(dim_in, device='cuda'),\
 
 #=======================================================================================================
 # restore models
-flow = torch.load("flow_final.pt") # load in cpu
+flow = torch.load("flow_final.pt")
 flow.eval()
 
 # disable gradient for the previous flow
