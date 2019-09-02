@@ -1,6 +1,5 @@
-# Autoregressive flow
+# Mixed density network
 
-Estimating spectroscopic-photometric distances with autoregressive flow.
 
 ## Installation
 Through pip
@@ -25,8 +24,6 @@ The [tutorial](blah) shows some simple use cases.
 
 ## Authors
 * [Yuan-Sen Ting](http://www.sns.ias.edu/~ting/) -- ting at ias dot edu
-* [Francois Lanusse](https://flanusse.net/)
-* [Nesar Ramanchandra](https://nesar.github.io/)
 
 ## Licensing
 
