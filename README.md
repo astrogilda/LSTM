@@ -1,5 +1,6 @@
-# Mixed density network
+# LSTM
 
+Predicting solar flares with LSTM
 
 ## Installation
 Through pip
