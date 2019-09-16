@@ -36,6 +36,7 @@ def get_obj_with_last_n_val(line, n):
     #
     return {'id': id, 'classType': class_label, 'values': data}
 
+
 def convert_json_data_to_numpy(data_dir: str, file_name: str):
     """
     :param data_dir: the path to the data directory.
@@ -52,14 +53,17 @@ def convert_json_data_to_numpy(data_dir: str, file_name: str):
             labels.append(obj['classType'])
             ids.append(obj['id'])
     #
-    A = np.stack(all_df, axis=-1)
-    A = np.einsum('ijk->kij', A)
-    return A
+    data = np.stack(all_df, axis=-1)
+    data = np.einsum('ijk->kij', A)
+    labels = np.asarray(labels)
+    ids = np.asarray(ids)
+    return data, labels, ids
 
 
 path_to_data = "../input/"
 file_name = "fold3Training.json"
-df = convert_json_data_to_numpy(path_to_data, file_name)  # shape: 27006 X 27
-print('df.shape = {}'.format(df.shape))
+data, labels, ids = convert_json_data_to_numpy(path_to_data, file_name)  # shape: 27006 X 27
+print('df.shape = {}'.format(data.shape))
+
 
 
