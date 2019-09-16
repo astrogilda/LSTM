@@ -62,7 +62,7 @@ def convert_json_data_to_numpy(data_dir: str, file_name: str):
 
 path_to_data = "../input/"
 file_name = "fold3Training.json"
-data, labels, ids = convert_json_data_to_numpy(path_to_data, file_name)  # shape: 27006 X 27
+data, labels, ids = convert_json_data_to_numpy(path_to_data, file_name)  # shape: 27006 X 60 X 25
 print('df.shape = {}'.format(data.shape))
 
 
